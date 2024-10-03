@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation Service</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .navbar {
+            background-color: #4a4e69;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar h2 {
+            color: white;
+            margin: 0;
+        }
+
+        .language-selector {
+            color: white;
+            background: none;
+            border: 2px solid white;
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+
+        .language-selector:hover {
+            border-color: #00bfff;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            max-width: 450px;
+            width: 90%;
+            margin-top: 80px; /* Add space for fixed navbar */
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+            border: 1px solid #e0e0e0;
+        }
+
+        h1 {
+            color: #4a4e69;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #6c757d;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .input-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 40px 12px 15px; /* Add padding for icons */
+            margin-bottom: 20px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease-in-out;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        input:focus, select:focus {
+            border-color: #4a4e69;
+            outline: none;
+        }
+
+        .input-container i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        button {
+            background-color: #4a4e69;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background-color: #22223b;
+            transform: scale(1.05);
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            animation: fadeIn 0.5s ease-in-out;
+            transition: background-color 0.3s ease-in-out;
+            font-size: 16px;
+        }
+
+        .result-box:hover {
+            background-color: #e8e8e8;
+        }
+
+        .icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            color: #4a4e69;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <h2>Translation Service</h2>
+        <select class="language-selector" id="languageSelector">
+            <option value="en">English</option>
+            <option value="zh">繁體中文</option>
+            <option value="ja">日本語</option>
+        </select>
+    </div>
+
+    <div class="container animate__animated animate__fadeInUp">
+        <i class="fas fa-language icon"></i>
+        <h1 id="title">Translation Service</h1>
+        
+        <div class="input-container">
+            <i class="fas fa-comment-alt"></i>
+            <label for="text" id="textLabel">Enter text:</label>
+            <input type="text" id="text" placeholder="Enter text to translate">
+        </div>
+
+        <div class="input-container">
+            <i class="fas fa-globe"></i>
+            <label for="dest-language" id="destLangLabel">Select destination language:</label>
+            <select id="dest-language"></select>
+        </div>
+
+        <button id="translateBtn" class="animate__animated animate__pulse">Translate</button>
+
+        <div class="result-box" id="result"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // 變更語言
+        const translations = {
+            "en": {
+                "title": "Translation Service",
+                "textLabel": "Enter text:",
+                "destLangLabel": "Select destination language:",
+                "translateBtn": "Translate",
+                "resultLabel": "Translation:"
+            },
+            "zh": {
+                "title": "翻譯服務",
+                "textLabel": "輸入文本：",
+                "destLangLabel": "選擇目標語言：",
+                "translateBtn": "翻譯",
+                "resultLabel": "翻譯結果："
+            },
+            "ja": {
+                "title": "翻訳サービス",
+                "textLabel": "テキストを入力してください：",
+                "destLangLabel": "目的の言語を選択してください：",
+                "translateBtn": "翻訳する",
+                "resultLabel": "翻訳結果："
+            }
+        };
+
+        function changeLanguage(language) {
+            $('#title').text(translations[language].title);
+            $('#textLabel').text(translations[language].textLabel);
+            $('#destLangLabel').text(translations[language].destLangLabel);
+            $('#translateBtn').text(translations[language].translateBtn);
+        }
+
+        // 語言選擇事件
+        $('#languageSelector').change(function() {
+            const selectedLanguage = $(this).val();
+            changeLanguage(selectedLanguage);
+            loadLanguages(selectedLanguage);
+        });
+
+        // Load supported languages
+        function loadLanguages(language) {
+            const languageAPI = {
+                "en": "https://translate-api-s81i.onrender.com/languages",
+                "zh": "https://translate-api-s81i.onrender.com/languages-zh-tw",
+                "ja": "https://translate-api-s81i.onrender.com/languages-ja"
+            };
+
+            $.getJSON(languageAPI[language], function(data) {
+                const destLanguageDropdown = $('#dest-language');
+                destLanguageDropdown.empty(); // Clear existing options
+                $.each(data, function(language, code) {
+                    destLanguageDropdown.append($('<option>', {
+                        value: code,
+                        text: language
+                    }));
+                });
+            });
+        }
+
+        $(document).ready(function() {
+            loadLanguages('en'); // Load default languages
+        });
+
+        // Translate button click event
+        $('#translateBtn').click(function() {
+            const text = $('#text').val();
+            const destLang = $('#dest-language').val();
+            const selectedLang = $('#languageSelector').val();
+
+            const apiUrl = selectedLang === "en" ? "https://translate-api-s81i.onrender.com/translate" :
+                          selectedLang === "zh" ? "https://translate-api-s81i.onrender.com/translate-zh-tw" :
+                          "https://translate-api-s81i.onrender.com/translate-ja";
+
+            $.ajax({
+                url: apiUrl,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ text, source: selectedLang, target: destLang }),
+                success: function(response) {
+                    $('#result').text(translations[selectedLang].resultLabel + response.translation);
+                },
+                error: function() {
+                    $('#result').text('Error occurred while translating. Please try again.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
