@@ -110,6 +110,19 @@
                 transform: translateY(0);
             }
         }
+
+        /* Search Box Style */
+        .search-box {
+            margin-bottom: 10px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -134,6 +147,9 @@
         </select>
 
         <label id="destLanguageLabel">Select destination language:</label>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search languages...">
+        </div>
         <select id="dest-language"></select>
 
         <button id="translateBtn" class="animate__animated animate__pulse">Translate</button>
@@ -159,6 +175,14 @@
 
                 // Automatically translate destination language names
                 translateLanguages(data);
+
+                // Search functionality for destination languages
+                $('#searchInput').on('keyup', function() {
+                    const searchTerm = $(this).val().toLowerCase();
+                    $('#dest-language option').filter(function() {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(searchTerm) > -1);
+                    });
+                });
             });
 
             // Language switch event
