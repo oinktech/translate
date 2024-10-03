@@ -82,7 +82,7 @@
 
         input, select {
             width: 100%;
-            padding: 12px 40px 12px 15px; /* Add padding for icons */
+            padding: 12px 15px;
             margin-bottom: 20px;
             border: 2px solid #ccc;
             border-radius: 8px;
@@ -94,14 +94,6 @@
         input:focus, select:focus {
             border-color: #4a4e69;
             outline: none;
-        }
-
-        .input-container i {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6c757d;
         }
 
         button {
@@ -130,10 +122,11 @@
             animation: fadeIn 0.5s ease-in-out;
             transition: background-color 0.3s ease-in-out;
             font-size: 16px;
+            display: none; /* 隱藏結果框 */
         }
 
-        .result-box:hover {
-            background-color: #e8e8e8;
+        .result-box.visible {
+            display: block; /* 顯示結果框 */
         }
 
         .icon {
@@ -170,13 +163,11 @@
         <h1 id="title">Translation Service</h1>
         
         <div class="input-container">
-            <i class="fas fa-comment-alt"></i>
             <label for="text" id="textLabel">Enter text:</label>
             <input type="text" id="text" placeholder="Enter text to translate">
         </div>
 
         <div class="input-container">
-            <i class="fas fa-globe"></i>
             <label for="dest-language" id="destLangLabel">Select destination language:</label>
             <select id="dest-language"></select>
         </div>
@@ -258,22 +249,18 @@
             const selectedLang = $('#languageSelector').val();
 
             const apiUrl = selectedLang === "en" ? "https://translate-api-s81i.onrender.com/translate" :
-                          selectedLang === "zh" ? "https://translate-api-s81i.onrender.com/translate-zh-tw" :
-                          "https://translate-api-s81i.onrender.com/translate-ja";
+                          selectedLang === "zh" ? "https://translate-api-s81i.onrender.com/translate" :
+                          "https://translate-api-s81i.onrender.com/translate";
 
-            $.ajax({
-                url: apiUrl,
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ text, source: selectedLang, target: destLang }),
-                success: function(response) {
-                    $('#result').text(translations[selectedLang].resultLabel + response.translation);
-                },
-                error: function() {
-                    $('#result').text('Error occurred while translating. Please try again.');
-                }
+            $.post(apiUrl, {
+                text: text,
+                lang: destLang
+            }, function(data) {
+                $('#result').text(translations[selectedLang].resultLabel + " " + data.translatedText);
+                $('#result').addClass('visible');
             });
         });
     </script>
+
 </body>
 </html>
