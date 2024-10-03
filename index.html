@@ -231,8 +231,8 @@
         function loadLanguages(language) {
             const languageAPI = {
                 "en": "https://translate-api-s81i.onrender.com/languages",
-                "zh": "https://translate-api-s81i.onrender.com/languages-zh-tw",
-                "ja": "https://translate-api-s81i.onrender.com/languages-ja"
+                "zh": "https://translate-api-s81i.onrender.com/languages/zh-tw",
+                "ja": "https://translate-api-s81i.onrender.com/languages/ja"
             };
 
             $.getJSON(languageAPI[language], function(data) {
@@ -258,8 +258,8 @@
             const selectedLang = $('#languageSelector').val();
 
             const apiUrl = selectedLang === "en" ? "https://translate-api-s81i.onrender.com/translate" :
-                          selectedLang === "zh" ? "https://translate-api-s81i.onrender.com/translate-zh-tw" :
-                          "https://translate-api-s81i.onrender.com/translate-ja";
+                          selectedLang === "zh" ? "https://translate-api-s81i.onrender.com/translate" :
+                          "https://translate-api-s81i.onrender.com/translate";
 
             $.ajax({
                 url: apiUrl,
