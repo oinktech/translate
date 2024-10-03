@@ -136,9 +136,13 @@
     <script>
         // Load supported languages
         $(document).ready(function() {
+            const srcLanguageDropdown = $('#src-language');
+            const destLanguageDropdown = $('#dest-language');
+
+            // Set initial source language to auto
+            srcLanguageDropdown.append($('<option>', { value: 'auto', text: 'Auto' }));
+
             $.getJSON("https://translate-api-s81i.onrender.com/languages", function(data) {
-                const srcLanguageDropdown = $('#src-language');
-                const destLanguageDropdown = $('#dest-language');
                 $.each(data, function(language, code) {
                     srcLanguageDropdown.append($('<option>', {
                         value: code,
@@ -155,7 +159,11 @@
             $('#languageSwitch').change(function() {
                 const selectedLanguage = $(this).val();
                 updateLanguage(selectedLanguage);
+                translateText(destLanguageDropdown.find('option:selected').text(), selectedLanguage);
             });
+
+            // Auto select destination language on load
+            translateText(destLanguageDropdown.find('option:selected').text(), $('#languageSwitch').val());
         });
 
         // Update interface language
@@ -189,6 +197,22 @@
             $('#srcLanguageLabel').text(translations[lang].srcLanguageLabel);
             $('#destLanguageLabel').text(translations[lang].destLanguageLabel);
             $('#translateBtn').text(translations[lang].translateBtn);
+        }
+
+        // Translate text when switching language
+        function translateText(text, lang) {
+            $.ajax({
+                url: 'https://translate-api-s81i.onrender.com/translate',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ text: text, src_lang: 'auto', dest_lang: lang }),
+                success: function(response) {
+                    $('#dest-language').find('option:selected').text(response.translated_text);
+                },
+                error: function(xhr) {
+                    console.error(`Error: ${xhr.responseJSON.message}`);
+                }
+            });
         }
 
         // Translate button click event
