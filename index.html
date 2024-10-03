@@ -159,8 +159,24 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // Load supported languages
+        let currentLanguage = 'en'; // Store the current language
+
         $(document).ready(function() {
+            loadLanguages();
+
+            // Language switch event
+            $('#languageSwitch').change(function() {
+                currentLanguage = $(this).val();
+                updateLanguage(currentLanguage);
+                translateSearchPlaceholder(currentLanguage);
+            });
+
+            // Initial setup for search placeholder
+            translateSearchPlaceholder(currentLanguage);
+        });
+
+        // Load supported languages and setup search input
+        function loadLanguages() {
             $.getJSON("https://translate-api-s81i.onrender.com/languages", function(data) {
                 const srcLanguageDropdown = $('#src-language');
                 const destLanguageDropdown = $('#dest-language');
@@ -184,17 +200,11 @@
                     });
                 });
             });
-
-            // Language switch event
-            $('#languageSwitch').change(function() {
-                const selectedLanguage = $(this).val();
-                updateLanguage(selectedLanguage);
-            });
-        });
+        }
 
         // Translate language names based on selected language
         function translateLanguages(languages) {
-            const langCode = $('#languageSwitch').val();
+            const langCode = currentLanguage;
             const translatedNames = {};
 
             $.each(languages, function(language, code) {
@@ -245,6 +255,17 @@
             $('#translateBtn').text(translations[lang].translateBtn);
         }
 
+        // Automatically translate the search input placeholder
+        function translateSearchPlaceholder(lang) {
+            const placeholders = {
+                'en': 'Search languages...',
+                'zh-TW': '搜尋語言...',
+                'ja': '言語を検索...'
+            };
+
+            $('#searchInput').attr('placeholder', placeholders[lang]);
+        }
+
         // Translate button click event
         $('#translateBtn').click(function() {
             const text = $('#text').val();
@@ -255,16 +276,12 @@
                 url: 'https://translate-api-s81i.onrender.com/translate',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({ text: text, src_lang: srcLang, dest_lang: destLang }),
+                data: JSON.stringify({ text, src_lang: srcLang, dest_lang: destLang }),
                 success: function(response) {
-                    $('#result').html(`<strong>Original:</strong> ${response.original_text}<br><strong>Translated:</strong> ${response.translated_text}`);
-                },
-                error: function(xhr) {
-                    $('#result').text(`Error: ${xhr.responseJSON.message}`);
+                    $('#result').text(response.translated_text);
                 }
             });
         });
     </script>
-
 </body>
 </html>
