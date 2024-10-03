@@ -41,6 +41,7 @@
             width: 100%;
             text-align: center;
             animation: fadeIn 1s ease-in-out;
+            position: relative;
         }
 
         h1 {
@@ -123,6 +124,31 @@
             border-radius: 5px;
             font-size: 14px;
         }
+
+        /* Loading Spinner Style */
+        .loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            color: #4a4e69;
+        }
+
+        .spinner {
+            border: 6px solid #f3f3f3; /* Light grey */
+            border-top: 6px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -153,6 +179,10 @@
         <select id="dest-language"></select>
 
         <button id="translateBtn" class="animate__animated animate__pulse">Translate</button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+        </div>
 
         <div class="result-box" id="result"></div>
     </div>
@@ -255,14 +285,13 @@
             $('#translateBtn').text(translations[lang].translateBtn);
         }
 
-        // Automatically translate the search input placeholder
+        // Update the search placeholder based on selected language
         function translateSearchPlaceholder(lang) {
             const placeholders = {
                 'en': 'Search languages...',
                 'zh-TW': '搜尋語言...',
-                'ja': '言語を検索...'
+                'ja': '言語を検索...',
             };
-
             $('#searchInput').attr('placeholder', placeholders[lang]);
         }
 
@@ -271,7 +300,10 @@
             const text = $('#text').val();
             const srcLang = $('#src-language').val();
             const destLang = $('#dest-language').val();
-            
+
+            // Show loading spinner
+            $('#loading').show();
+
             $.ajax({
                 url: 'https://translate-api-s81i.onrender.com/translate',
                 type: 'POST',
@@ -279,6 +311,10 @@
                 data: JSON.stringify({ text, src_lang: srcLang, dest_lang: destLang }),
                 success: function(response) {
                     $('#result').text(response.translated_text);
+                },
+                complete: function() {
+                    // Hide loading spinner
+                    $('#loading').hide();
                 }
             });
         });
