@@ -198,6 +198,7 @@
             $('#languageSwitch').change(function() {
                 currentLanguage = $(this).val();
                 updateLanguage(currentLanguage);
+                translateLanguages(); // Call to translate languages when switching language
                 translateSearchPlaceholder(currentLanguage);
             });
 
@@ -233,11 +234,15 @@
         }
 
         // Translate language names based on selected language
-        function translateLanguages(languages) {
+        function translateLanguages() {
             const langCode = currentLanguage;
+            const languages = $('#src-language option').toArray().concat($('#dest-language option').toArray());
             const translatedNames = {};
 
-            $.each(languages, function(language, code) {
+            languages.forEach(option => {
+                const language = option.textContent;
+                const code = option.value;
+                
                 $.ajax({
                     url: 'https://translate-api-s81i.onrender.com/translate',
                     type: 'POST',
@@ -271,11 +276,11 @@
                 },
                 'ja': {
                     title: '翻訳サービス',
-                    inputLabel: 'テキストを入力してください：',
+                    inputLabel: 'テキストを入力：',
                     srcLanguageLabel: 'ソース言語を選択：',
                     destLanguageLabel: '宛先言語を選択：',
                     translateBtn: '翻訳する',
-                }
+                },
             };
 
             $('#title').text(translations[lang].title);
@@ -285,38 +290,43 @@
             $('#translateBtn').text(translations[lang].translateBtn);
         }
 
-        // Update the search placeholder based on selected language
+        // Translate search box placeholder based on selected language
         function translateSearchPlaceholder(lang) {
-            const placeholders = {
+            const searchPlaceholders = {
                 'en': 'Search languages...',
-                'zh-TW': '搜尋語言...',
+                'zh-TW': '搜索語言...',
                 'ja': '言語を検索...',
             };
-            $('#searchInput').attr('placeholder', placeholders[lang]);
+            $('#searchInput').attr('placeholder', searchPlaceholders[lang]);
         }
 
         // Translate button click event
         $('#translateBtn').click(function() {
-            const text = $('#text').val();
-            const srcLang = $('#src-language').val();
-            const destLang = $('#dest-language').val();
+            const textToTranslate = $('#text').val();
+            const srcLanguage = $('#src-language').val();
+            const destLanguage = $('#dest-language').val();
 
-            // Show loading spinner
-            $('#loading').show();
+            if (textToTranslate) {
+                $('#loading').show();
+                $('#result').text('');
 
-            $.ajax({
-                url: 'https://translate-api-s81i.onrender.com/translate',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ text, src_lang: srcLang, dest_lang: destLang }),
-                success: function(response) {
-                    $('#result').text(response.translated_text);
-                },
-                complete: function() {
-                    // Hide loading spinner
-                    $('#loading').hide();
-                }
-            });
+                $.ajax({
+                    url: 'https://translate-api-s81i.onrender.com/translate',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ text: textToTranslate, src_lang: srcLanguage, dest_lang: destLanguage }),
+                    success: function(response) {
+                        $('#loading').hide();
+                        $('#result').text(response.translated_text);
+                    },
+                    error: function() {
+                        $('#loading').hide();
+                        $('#result').text('Error during translation. Please try again.');
+                    }
+                });
+            } else {
+                alert("Please enter text to translate.");
+            }
         });
     </script>
 </body>
