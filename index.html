@@ -9,135 +9,86 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
+            background-color: #f4f4f9;
             display: flex;
+            justify-content: center;
+            align-items: center;
             flex-direction: column;
-            align-items: center;
-        }
-
-        .navbar {
-            background-color: #4a4e69;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            position: fixed;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .navbar h2 {
-            color: white;
+            height: 100vh;
             margin: 0;
         }
 
         .language-selector {
-            color: white;
-            background: none;
-            border: 2px solid white;
-            padding: 5px 10px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: border-color 0.3s;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
         }
 
-        .language-selector:hover {
-            border-color: #00bfff;
+        .language-selector select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
         }
 
         .container {
             background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            max-width: 450px;
-            width: 90%;
-            margin-top: 80px; /* Add space for fixed navbar */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
             text-align: center;
             animation: fadeIn 1s ease-in-out;
-            border: 1px solid #e0e0e0;
         }
 
         h1 {
             color: #4a4e69;
             margin-bottom: 20px;
-            font-size: 24px;
         }
 
         label {
-            font-size: 16px;
+            font-size: 14px;
             color: #6c757d;
             margin-bottom: 5px;
             display: block;
         }
 
-        .input-container {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
         input, select {
             width: 100%;
-            padding: 12px 40px 12px 15px; /* Add padding for icons */
-            margin-bottom: 20px;
-            border: 2px solid #ccc;
-            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
             font-size: 16px;
-            transition: border-color 0.3s ease-in-out;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        input:focus, select:focus {
-            border-color: #4a4e69;
-            outline: none;
-        }
-
-        .input-container i {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6c757d;
         }
 
         button {
             background-color: #4a4e69;
             color: white;
             border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease-in-out;
         }
 
         button:hover {
             background-color: #22223b;
-            transform: scale(1.05);
         }
 
         .result-box {
             margin-top: 20px;
-            padding: 15px;
+            padding: 10px;
             border: 1px solid #ccc;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            animation: fadeIn 0.5s ease-in-out;
-            transition: background-color 0.3s ease-in-out;
-            font-size: 16px;
-        }
-
-        .result-box:hover {
-            background-color: #e8e8e8;
+            border-radius: 5px;
+            background-color: #f0f0f0;
         }
 
         .icon {
-            font-size: 50px;
+            font-size: 40px;
             margin-bottom: 20px;
             color: #4a4e69;
         }
@@ -156,11 +107,10 @@
 </head>
 <body>
 
-    <div class="navbar">
-        <h2>Translation Service</h2>
-        <select class="language-selector" id="languageSelector">
+    <div class="language-selector">
+        <select id="languageSwitch">
             <option value="en">English</option>
-            <option value="zh">繁體中文</option>
+            <option value="zh-TW">繁體中文</option>
             <option value="ja">日本語</option>
         </select>
     </div>
@@ -168,18 +118,14 @@
     <div class="container animate__animated animate__fadeInUp">
         <i class="fas fa-language icon"></i>
         <h1 id="title">Translation Service</h1>
-        
-        <div class="input-container">
-            <i class="fas fa-comment-alt"></i>
-            <label for="text" id="textLabel">Enter text:</label>
-            <input type="text" id="text" placeholder="Enter text to translate">
-        </div>
+        <label id="inputLabel">Enter text:</label>
+        <input type="text" id="text" placeholder="Enter text to translate">
 
-        <div class="input-container">
-            <i class="fas fa-globe"></i>
-            <label for="dest-language" id="destLangLabel">Select destination language:</label>
-            <select id="dest-language"></select>
-        </div>
+        <label id="srcLanguageLabel">Select source language:</label>
+        <select id="src-language"></select>
+
+        <label id="destLanguageLabel">Select destination language:</label>
+        <select id="dest-language"></select>
 
         <button id="translateBtn" class="animate__animated animate__pulse">Translate</button>
 
@@ -188,92 +134,83 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // 變更語言
-        const translations = {
-            "en": {
-                "title": "Translation Service",
-                "textLabel": "Enter text:",
-                "destLangLabel": "Select destination language:",
-                "translateBtn": "Translate",
-                "resultLabel": "Translation:"
-            },
-            "zh": {
-                "title": "翻譯服務",
-                "textLabel": "輸入文本：",
-                "destLangLabel": "選擇目標語言：",
-                "translateBtn": "翻譯",
-                "resultLabel": "翻譯結果："
-            },
-            "ja": {
-                "title": "翻訳サービス",
-                "textLabel": "テキストを入力してください：",
-                "destLangLabel": "目的の言語を選択してください：",
-                "translateBtn": "翻訳する",
-                "resultLabel": "翻訳結果："
-            }
-        };
-
-        function changeLanguage(language) {
-            $('#title').text(translations[language].title);
-            $('#textLabel').text(translations[language].textLabel);
-            $('#destLangLabel').text(translations[language].destLangLabel);
-            $('#translateBtn').text(translations[language].translateBtn);
-        }
-
-        // 語言選擇事件
-        $('#languageSelector').change(function() {
-            const selectedLanguage = $(this).val();
-            changeLanguage(selectedLanguage);
-            loadLanguages(selectedLanguage);
-        });
-
         // Load supported languages
-        function loadLanguages(language) {
-            const languageAPI = {
-                "en": "https://translate-api-s81i.onrender.com/languages",
-                "zh": "https://translate-api-s81i.onrender.com/languages/zh-tw",
-                "ja": "https://translate-api-s81i.onrender.com/languages/ja"
-            };
-
-            $.getJSON(languageAPI[language], function(data) {
+        $(document).ready(function() {
+            $.getJSON("https://translate-api-s81i.onrender.com/languages", function(data) {
+                const srcLanguageDropdown = $('#src-language');
                 const destLanguageDropdown = $('#dest-language');
-                destLanguageDropdown.empty(); // Clear existing options
                 $.each(data, function(language, code) {
+                    srcLanguageDropdown.append($('<option>', {
+                        value: code,
+                        text: language
+                    }));
                     destLanguageDropdown.append($('<option>', {
                         value: code,
                         text: language
                     }));
                 });
             });
-        }
 
-        $(document).ready(function() {
-            loadLanguages('en'); // Load default languages
+            // Language switch event
+            $('#languageSwitch').change(function() {
+                const selectedLanguage = $(this).val();
+                updateLanguage(selectedLanguage);
+            });
         });
+
+        // Update interface language
+        function updateLanguage(lang) {
+            const translations = {
+                'en': {
+                    title: 'Translation Service',
+                    inputLabel: 'Enter text:',
+                    srcLanguageLabel: 'Select source language:',
+                    destLanguageLabel: 'Select destination language:',
+                    translateBtn: 'Translate',
+                },
+                'zh-TW': {
+                    title: '翻譯服務',
+                    inputLabel: '輸入文字：',
+                    srcLanguageLabel: '選擇源語言：',
+                    destLanguageLabel: '選擇目標語言：',
+                    translateBtn: '翻譯',
+                },
+                'ja': {
+                    title: '翻訳サービス',
+                    inputLabel: 'テキストを入力してください：',
+                    srcLanguageLabel: 'ソース言語を選択：',
+                    destLanguageLabel: '宛先言語を選択：',
+                    translateBtn: '翻訳する',
+                }
+            };
+
+            $('#title').text(translations[lang].title);
+            $('#inputLabel').text(translations[lang].inputLabel);
+            $('#srcLanguageLabel').text(translations[lang].srcLanguageLabel);
+            $('#destLanguageLabel').text(translations[lang].destLanguageLabel);
+            $('#translateBtn').text(translations[lang].translateBtn);
+        }
 
         // Translate button click event
         $('#translateBtn').click(function() {
             const text = $('#text').val();
+            const srcLang = $('#src-language').val();
             const destLang = $('#dest-language').val();
-            const selectedLang = $('#languageSelector').val();
-
-            const apiUrl = selectedLang === "en" ? "https://translate-api-s81i.onrender.com/translate" :
-                          selectedLang === "zh" ? "https://translate-api-s81i.onrender.com/translate" :
-                          "https://translate-api-s81i.onrender.com/translate";
-
+            
             $.ajax({
-                url: apiUrl,
-                method: 'POST',
+                url: 'https://translate-api-s81i.onrender.com/translate',
+                type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({ text, source: selectedLang, target: destLang }),
+                data: JSON.stringify({ text: text, src_lang: srcLang, dest_lang: destLang }),
                 success: function(response) {
-                    $('#result').text(translations[selectedLang].resultLabel + response.translation);
+                    $('#result').html(`<strong>Original:</strong> ${response.original_text}<br><strong>Translated:</strong> ${response.translated_text}`);
                 },
-                error: function() {
-                    $('#result').text('Error occurred while translating. Please try again.');
+                error: function(xhr) {
+                    $('#result').text(`Error: ${xhr.responseJSON.message}`);
                 }
             });
         });
     </script>
+
 </body>
 </html>
